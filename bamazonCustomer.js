@@ -1,9 +1,6 @@
 const mysql = require("mysql");
 const table = require("table").table;
-// const Prompt = require("prompt-checkbox");
 const inquirer = require("inquirer");
-// const CLIinput = process.argv
-
 const connection = mysql.createConnection({
     host: "localHost",
     port: 3306,
@@ -42,23 +39,20 @@ function displayProducts() {
 function purchaseOrder(res) {
     let product;
     let quantity;
+
     inquirer.prompt([
         {
             name: "productChoice",
             message: "What is the ID of the product you would like to purchase? (Choose one!)",
-            validate: function (productID) {
+            validate: productID => {
                 product = res.find(database => Number(productID) === database.item_id);
-
-                // console.log("validating product:", product); 
-                if (product === undefined || product === NaN) {
-                    return "I don't know that product ID.";
-                } else return true
+                return (product !== undefined) || "I don't know that product ID.";
             }
         },
         {
             name: "productAmount",
             message: "How many of this product would you like to purchase?",
-            validate: function (productQuantity) {
+            validate: productQuantity => {
                 quantity = Number(productQuantity);
                 let quantityInStock = product.stock_quantity;
                 if (!Number.isInteger(quantity) || quantity <= 0) {
@@ -68,7 +62,7 @@ function purchaseOrder(res) {
                 } else return true;
             }
         }
-    ]).then(answers => {
+    ]).then( answers => {
         connection.query(
             "UPDATE products SET ? WHERE ?",
             [
