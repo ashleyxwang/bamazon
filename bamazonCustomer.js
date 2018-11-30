@@ -22,8 +22,7 @@ function displayProducts() {
         "SELECT * FROM products",
         function (err, res) {
             if (err) throw err;
-            let result = JSON.parse(JSON.stringify(res));
-            let resultArray = result.map(input => [input.item_id, input.product_name, input.price.toFixed(2), input.stock_quantity]);
+            let resultArray = res.map(input => [input.item_id, input.product_name, input.price.toFixed(2), input.stock_quantity]);
             resultArray.unshift(['ID ', 'PRODUCT ', 'PRICE  ', 'QTY  ']);
 
             const display = table(resultArray);
